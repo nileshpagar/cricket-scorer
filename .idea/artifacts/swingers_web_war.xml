@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="swingers-web:war">
-    <output-path>$PROJECT_DIR$/scorer-web/target</output-path>
-    <root id="archive" name="scorer-web.war">
-      <element id="artifact" artifact-name="swingers-web:war exploded" />
-    </root>
-  </artifact>
-</component>
