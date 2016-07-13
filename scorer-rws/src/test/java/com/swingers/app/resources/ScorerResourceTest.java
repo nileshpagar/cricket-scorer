@@ -2,10 +2,9 @@ package com.swingers.app.resources;
 
 import com.swingers.app.config.AppConfiguration;
 import com.swingers.app.config.ScorerApplication;
-import com.swingers.app.model.Team;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -25,10 +24,13 @@ public class ScorerResourceTest {
 
     @Test
     public void shouldCreateTeam(){
-        Team team = new Team();
-        Client client = new JerseyClientBuilder().build();
-        Response response = client.target("http://localhost:8080/swingers?teamName=TCC").request().get();
-        assertEquals(302, response.getStatus());
+        Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("swingers test client");
+
+        Response response = client.target(
+                String.format("http://localhost:%d/swingers?teamName=TCC", RULE.getLocalPort()))
+                .request().get();
+
+        assertEquals(200, response.getStatus());
     }
 
 }
