@@ -1,12 +1,12 @@
 package com.swingers.app.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Preconditions;
+import com.swingers.app.cache.SwingersCache;
 import com.swingers.app.model.Team;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -16,19 +16,26 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class ScorerResource {
 
-    private final String template;
-    private final String defaultName;
 
-    public ScorerResource(String template, String defaultName){
-        this.template = template;
-        this.defaultName = defaultName;
+
+    @Autowired
+    SwingersCache swingersCache;
+
+    @POST
+    @Timed
+    @Path("create/team")
+    public Team createTeam(Team team){
+        System.out.println("adding "+ team + " to guava cache");
+        swingersCache.storeTeam(team);
+        return team;
     }
 
     @GET
     @Timed
-    public Team createTeam(@QueryParam("teamName") final String teamName){
-        Team team = new Team();
-        team.setName(teamName);
+    @Path("get/team")
+    public Team getTeam(@QueryParam("id")String id){
+        Team team = swingersCache.getTeam(Preconditions.checkNotNull(id));
+        System.out.println("querying for "+ id+ ", result" + team);
         return team;
     }
 
